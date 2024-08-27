@@ -1,8 +1,15 @@
-import numpy as np
+import tensorflow as tf
 from tensorflow.keras.applications import EfficientNetB0
 from tensorflow.keras.applications.efficientnet import preprocess_input
 from tensorflow.keras.preprocessing import image
 from tensorflow.keras.models import Model
+import numpy as np
+
+# Check if GPU is available
+if tf.config.list_physical_devices('GPU'):
+    print("Using GPU")
+else:
+    print("Using CPU")
 
 # Load the EfficientNetB0 model
 base_model = EfficientNetB0(weights='imagenet', include_top=False, pooling='avg')
