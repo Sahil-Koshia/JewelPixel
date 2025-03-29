@@ -39,7 +39,7 @@ def upload_file():
 
         # Process the image to extract features and find similar images
         features = extract_features(temp_file_path)
-        similar_images = db.find_similar_images(features=features, max_results=50, similarity_threshold=0.5)
+        similar_images = db.find_similar_images(features=features, max_results=300, similarity_threshold=0.5)
 
         # Normalize paths to use forward slashes
         similar_image_urls = [
@@ -68,7 +68,7 @@ def search_by_text():
     # Use the first matching image to find similar images
     first_match = matching_images[0]
     features = extract_features(first_match)
-    similar_images = db.find_similar_images(features=features, max_results=50, similarity_threshold=0.5)
+    similar_images = db.find_similar_images(features=features, max_results=300, similarity_threshold=0.5)
 
     # Normalize paths to use forward slashes
     similar_image_urls = [
@@ -96,8 +96,16 @@ def download_selected():
     zip_buffer = BytesIO()
     with zipfile.ZipFile(zip_buffer, 'w') as zip_file:
         for image_path in selected_images:
-            image_name = os.path.basename(image_path)
-            zip_file.write(os.path.join(app.config['UPLOAD_FOLDER'], image_path.replace('/static/images/', '')), image_name)
+            # Normalize the path
+            image_path_normalized = os.path.normpath(image_path.replace('/static/images/', '').replace('%20', ' '))
+            image_full_path = os.path.join(app.config['UPLOAD_FOLDER'], image_path_normalized)
+
+            if os.path.exists(image_full_path):
+                image_name = os.path.basename(image_full_path)
+                zip_file.write(image_full_path, image_name)
+            else:
+                return jsonify({'error': f'File not found: {image_full_path}'}), 404
+    
     zip_buffer.seek(0)
     
     return send_file(zip_buffer, mimetype='application/zip', as_attachment=True, download_name='selected_images.zip')
