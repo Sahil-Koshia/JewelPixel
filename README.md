@@ -53,7 +53,7 @@ Setting up a virtual environment helps keep dependencies isolated:
 
 bash
 Copy code
-python3 -m venv venv
+python -m venv venv
 Activate the virtual environment:
 
 On Windows:
