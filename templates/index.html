@@ -177,7 +177,7 @@
         });
 
         // Handle Select All functionality
-        document.getElementById('selectAllCheckbox').addEventListener('change', function() {
+        document.getElementById('selectAllCheckbox').addEventListener('change', function(event) {
             var checkboxes = document.querySelectorAll('input[name="selected_images"]');
             checkboxes.forEach(function(checkbox) {
                 checkbox.checked = event.target.checked;
